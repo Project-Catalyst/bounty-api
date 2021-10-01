@@ -13,6 +13,7 @@ import logger from './logger'
 import fs from 'fs'
 
 const WWW_HOST = require(`./constants.${process.env.NODE_ENV}`).WWW_HOST
+const ALLOW_ORIGIN = require(`./constants.${process.env.NODE_ENV}`).ALLOW_ORIGIN
 //Telling axios to use cookies
 axios.defaults.withCredentials = true
 
@@ -91,7 +92,7 @@ authenticate()
 const api = express()
 
 api.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", `https://${WWW_HOST}`);
+    res.header("Access-Control-Allow-Origin", ALLOW_ORIGIN);
     res.header('Access-Control-Allow-Credentials', true);
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
