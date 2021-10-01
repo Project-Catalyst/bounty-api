@@ -1,16 +1,18 @@
 /*jshint -W033 */
 /*jshint -W119 */
 'use strict'
+import 'dotenv/config';
 import express from 'express'
 import  { Octokit } from 'octokit'
 import { createAppAuth } from "@octokit/auth-app";
 import axios from 'axios'
 // import cors from 'cors'
 import cookieParser from 'cookie-parser';
-import session from 'express-session';
+import session from 'cookie-session';
 import logger from './logger'
 import fs from 'fs'
 
+const WWW_HOST = require(`./constants.${process.env.NODE_ENV}`).WWW_HOST
 //Telling axios to use cookies
 axios.defaults.withCredentials = true
 
@@ -20,6 +22,7 @@ const REPO = 'project-catalyst.github.io'
 const BH_NEEDED_LBL = 'bounty-hunter-needed'
 const BH_ASSIGNED_LBL = 'bounty-hunter-assigned'
 const CACHE_DURATION_MS = 120000
+
 const state = {
     authentication : null,
     bountiesWithHunterNeeded:[],
@@ -88,7 +91,7 @@ authenticate()
 const api = express()
 
 api.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "https://ccs-dev.ynvrs.eu");
+    res.header("Access-Control-Allow-Origin", `https://${WWW_HOST}`);
     res.header('Access-Control-Allow-Credentials', true);
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
@@ -140,8 +143,9 @@ api.get("/github_auth",async (request,response,next) =>{
     state.users[`${request.query.state}`] = oauth_result
     state.users[`${request.query.state}`].timestamp = Date.now()
 
-    response.redirect(308,`https://ccs-dev.ynvrs.eu/en/bounties/`)
+    response.redirect(308,`https://${WWW_HOST}/en/bounties/`)
 })
+
 api.get("/upvote",async (request,response,next) =>{
 
     let issue_number = request.query.issue
@@ -161,6 +165,7 @@ api.get("/upvote",async (request,response,next) =>{
     }
 
 })
+
 api.get("/downvote",async (request,response,next) =>{
 
     state.bountiesWithHunterAssignedLastUpdated = 0
