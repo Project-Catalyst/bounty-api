@@ -95,6 +95,7 @@ api.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", ALLOW_ORIGIN);
     res.header('Access-Control-Allow-Credentials', true);
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    // res.header("Vary: Origin")
     next();
 });
 
@@ -128,8 +129,6 @@ api.get(`/bounties/${BH_NEEDED_LBL}`,async (request,response,next) =>{
 })
 api.get("/github_auth",async (request,response,next) =>{
     
-    logger.debug(request)
-
     let oauth = await axios.post('https://github.com/login/oauth/access_token',{
         client_id: 'Iv1.75f9d9c2e09de0f5',
         client_secret: `${fs.readFileSync('./secrets/secret.txt','utf8')}`,
